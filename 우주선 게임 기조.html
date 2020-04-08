@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body{position: relative;}
+    #container{
+        width: 100%;
+        height: 400px;
+        background-image: url("../images/plane/game_bg.jpg");
+    }
+</style>
+<script src="../Day-10/Plane.js"></script>
+<script src="../Day-10/Bullet.js"></script>
+<script>
+    var hero;
+    var zz = hero.style.top;
+    var kk = hero.velY;
+    var container;
+    var bgX =0; // 게임 배경의 x 위치!!
+    var bulletArray = new Array(); // 총알안 다수개가 존재할것이므로. 배열로 간다
+                                            // 개성있는 이름 필요없다.
+    window.addEventListener("load", function(){
+        container = document.getElementById("container");
+        createHero();
+
+        //키보드 이벤트 구현!!
+        document.body.addEventListener("keydown",function(e){
+            //37왼, 38 위, 39 우, 40 하
+            switch(e.keyCode){
+                case 37:hero.velX=-2; break;
+                case 38:hero.velY=-2;; break;
+                case 39:hero.velX=2;break;
+                case 40:hero.velY=2;; break;
+                //spcebar 누르면 총알처리
+                case 32:fire();break;
+            }
+        });
+        // 키보드에서 손을 뗄 때 속도를 0으로 놓자!!!
+        document.body.addEventListener("keyup", function(e){
+            hero.velX=0;
+            hero.velY=0;
+        });
+
+        gameLoop();
+    });
+    function fire(){
+        //생성과 동시에 배열에 밀어넣자!!
+        //이름이 필용벗는 이유는 어차피 배열.......
+        // ...............
+        bulletArray.push(new Bullet(container,zz,kk));
+        //hint: 총알은 태어날때부터 x,y 위치가 우주선의 x,y와 일치해야한다.
+        // 생성될때 부터~~
+    }
+
+    function createHero(){
+        hero = new Plane(container);
+    }
+
+    function moveBg(){
+        bgX-=5;
+        container.style.backgroundPosition =bgX+ "px 0px";
+    }
+
+    //총알 클래스로부터 인스턴스를 생성하자!!
+
+    // 게임의 엔진에 해당하는 루프~~~
+    // 모든 게임은 무조건 루프가 1개 이상 있어야 한다!!
+    function gameLoop(){
+        moveBg();
+
+        //주인공의 tick(), render() 호출!!!
+        hero.tick();
+        hero.render();
+        for(var i=0; i<bulletArray.length;i++){
+            bulletArray[i].tick();
+            bulletArray[i].render();
+        }
+        setTimeout("gameLoop()", 10);
+    }
+</script>
+<body>
+    <div id="container"></div>
+</body>
+</html>
